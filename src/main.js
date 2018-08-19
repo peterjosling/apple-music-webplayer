@@ -19,6 +19,10 @@ import VueLocalStorage from 'vue-localstorage';
 // Vue router
 import VueRouter from 'vue-router';
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
+}
+
 // Private configuration
 import privateConfig from './private';
 

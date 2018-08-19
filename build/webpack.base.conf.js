@@ -3,6 +3,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
+const {GenerateSW} = require('workbox-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -77,6 +78,32 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new GenerateSW(
+      {
+        cacheId: 'zachary-seguin-music',
+        runtimeCaching: [
+          {
+            urlPattern: /https:\/\/([^/.])+\.mzstatic\.com\/image\/|https:\/\/apple-[^/.]+\.s3\.amazonaws\.com\/[^/]+\/(?:C-|image)/,
+            handler: 'cacheFirst',
+            options: {
+              cacheName: 'zachary-seguin-music-album-art',
+              matchOptions: {
+                // Uploaded art is stored in S3 and URLs contain a signature
+                // in the query string, which changes with each request.
+                ignoreSearch: true
+              },
+              // Support caching opaque responses. Uploaded art doesn't
+              // support CORS.
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
+    )
+  ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
     // source contains it (although only uses it if it's native).
