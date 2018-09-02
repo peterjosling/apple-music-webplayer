@@ -9,8 +9,7 @@
 </template>
 
 <script>
-import Raven from 'raven-js';
-import EventBus from '../event-bus';
+import {library} from '../library';
 
 import SongCollectionList from '../components/SongCollectionList.vue';
 import Loading from '../components/Loading.vue';
@@ -25,53 +24,17 @@ export default {
     title: String
   },
   data: function () {
-    let musicKit = window.MusicKit.getInstance();
-
     return {
-      musicKit: musicKit,
-      albums: null
+      albums: library.albums
     };
   },
-  methods: {
-    fetch: function (offset) {
-      if (this.abort) {
-        return;
-      }
-
-      this.loading = true;
-
-      if (!offset) {
-        offset = 0;
-      }
-
-      this.musicKit.api.library.albums(null, { offset: offset, limit: 100 })
-        .then(r => {
-          if (!this.albums) {
-            this.albums = r;
-          } else {
-            this.albums = this.albums.concat(r);
-          }
-
-          if (r.length !== 0) {
-            this.fetch(offset + 100);
-          } else {
-            this.loading = false;
-          }
-        }, err => {
-          Raven.captureException(err);
-
-          EventBus.$emit('alert', {
-            type: 'danger',
-            message: `An unexpected error occurred.`
-          });
-        });
+  computed: {
+    loading: function () {
+      return library.albumsFetcher.fetching;
     }
   },
   created: function () {
-    this.fetch();
-  },
-  destroyed: function () {
-    this.abort = true;
+    library.loadAlbums();
   }
 };
 </script>
