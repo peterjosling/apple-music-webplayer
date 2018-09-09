@@ -1,0 +1,14 @@
+{
+  "name": "Zachary Seguin Music",
+  "short_name": "ZS Music",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f3f3",
+  "theme_color": "#ff2d57",
+  "description": "A web player for Apple Music, built using MusicKit JS.",
+  "icons": [
+    {
+      "src": "/static/img/favicon.ico"
+    }
+  ]
+}
